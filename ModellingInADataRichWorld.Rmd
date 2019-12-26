@@ -264,13 +264,14 @@ idx_polio = grep("polio",
 I obtain the following result.
 
 ```{r print_table} 
-kable(GHO_indices[idx_polio,1:2], row.names = FALSE, format = "latex", booktabs = TRUE) %>% kable_styling(latex_options = "striped")
+kable(GHO_indices[idx_polio,1:2], row.names = FALSE, format = "latex", booktabs = TRUE) %>%   		
+	kable_styling(latex_options = "striped")
 ```
 
 Using the name of one of the indices in the table above (e.g., `poliov`) as `indicator` in the first chunk in this section would then allow to load the corresponding dataset.
 
 ### Using existing `R` libraries{#sec:R_API_libs}
-`R` abounds with packages allowing to perform easily the operations I carried out with the WHO GHO indices in Section \ref{sec:usingAPI}.
+`R` abounds with packages allowing to perform easily the operations I carried out with the WHO GHO indicators in Section \ref{sec:usingAPI}.
 (`Python` also has plethora of packages to access API, but for the present document I use only `R` solutions.)
 To name a few,
 
