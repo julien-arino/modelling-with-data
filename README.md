@@ -10,4 +10,5 @@ Here are a few remarks concerning the production of the PDF from the RMD file.
   install_github("pablo14/formatR")
   ```
 (See details here: https://stackoverflow.com/questions/20778635/formatr-width-cutoff-issue)
+
 2. The `elsarticle.cls` article class does not coexist well with the default Pandoc style used to create a PDF. There is probably a way to override the production of the title and related information, but until I work out the details, you can get the front matter to work properly by finding and deleting some code in the LaTeX file. I include an `R` script, `process_latex_file.R`, which does this.
