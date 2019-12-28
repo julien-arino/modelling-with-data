@@ -7,10 +7,12 @@ output:
     fig_caption: true
     number_sections: yes
     keep_tex: yes
-documentclass: elsarticle
+documentclass: article
 fontsize: 12pt
 bibliography: bibliography.bibtex
-biblio-style: natbib
+biblio-style: plain
+title: "Mathematical epidemiology in a data-rich world"
+abstract: "I discuss the acquisition and use of ``background'' data in mathematical epidemiology models, advocating a pro-active approach to the incorporation of said data. I illustrate various mechanisms for acquiring data, mainly from open data sources. I also discuss incorporating this data into models."
 ---
 
 ```{r setup, include=FALSE, warning=FALSE}
@@ -264,7 +266,7 @@ idx_polio = grep("polio",
 
 I obtain the following result.
 
-```{r print_table, echo=FALSE} 
+```{r print_table, echo=FALSE}
 kable(GHO_indicators[idx_polio,1:2], row.names = FALSE, format = "latex", booktabs = TRUE) %>%   		
 	kable_styling(latex_options = "striped")
 ```
@@ -476,8 +478,8 @@ Now that the most basic mechanisms for acquiring data from the web have been exp
 Remark, however, that while it is important to be aware of the magnitudes and time scales involved in the processes studied, it is also important to not use data just for the sake of using data.
 Also, note that I do not discuss in these lecture notes another aspect of data acquisition that is very important, namely the verification and validation of data.
 
-There are a variety of ways for data to be incorporated into dynamical models. The main are as parameters or initial conditions, or as time series with which model solutions can be compared in order to identify other parameters. 
-In essence, as far as model simulations go, parameters and initial conditions can be thought of as being of the same nature, mimicking the theoretic similarity between continuous dependence on initial values and parameters. 
+There are a variety of ways for data to be incorporated into dynamical models. The main are as parameters or initial conditions, or as time series with which model solutions can be compared in order to identify other parameters.
+In essence, as far as model simulations go, parameters and initial conditions can be thought of as being of the same nature, mimicking the theoretic similarity between continuous dependence on initial values and parameters.
 So, by abuse of language, in these notes, I often call parameters both parameters and initial conditions.
 Parameters can be classified for instance in terms of their reliability or the way they are derived.
 
@@ -621,7 +623,7 @@ for (s in 2:10) {
 
 As an example of the use of adding compartments to fit known sojourn time distributions, let me consider the incubation period for Ebola Virus Disease. During the 2014 EVD crisis in Western Africa, the WHO Ebola Response Team estimated incubation periods in the paper [@WHORespTeam2015].
 Table S2 in the Supplementary Information in that paper gives the best fit for the distribution of incubation periods for EVD as a Gamma distribution with mean 10.3 days and standard deviation 8.2, i.e., $n\varepsilon = 10.3$ and $\varepsilon \sqrt{n}=8.2$.
-From this, I obtain that $\varepsilon = 8.2^2/10.3 \simeq 6.53$ and $n = 10.3^2/8.2^2 \simeq 1.57$. However, that is a Gamma distribution. 
+From this, I obtain that $\varepsilon = 8.2^2/10.3 \simeq 6.53$ and $n = 10.3^2/8.2^2 \simeq 1.57$. However, that is a Gamma distribution.
 
 In order to fit within the context of using multiple compartments to better fit residence times, since the number of compartments is an integer I need to find the closest possible Erlang distribution to this Gamma distribution.
 To do this, let me compute the square of errors between data points generated from the given Gamma distribution and an Erlang. The following function computes the square of the difference between data points $(t_i,d_i)$ and a Gamma distribution with shape `shape` and scale `theta`, evaluated at the same $t_i$. (To get an Erlang distribution, `shape` needs to be an integer.)
@@ -667,7 +669,7 @@ optimize_gamma <- function(t,d) {
 }
 ```
 
-Finally, I call the function above with parameters of the Gamma distribution as given in the paper. If you had your own data points, you could use them instead in the chunk below. (The points in time for your data would be in the vector `time_points`, while the corresponding values would be in `data_points`.) 
+Finally, I call the function above with parameters of the Gamma distribution as given in the paper. If you had your own data points, you could use them instead in the chunk below. (The points in time for your data would be in the vector `time_points`, while the corresponding values would be in `data_points`.)
 
 ```{r run_optim_Erlang}
 time_points <- seq(0,60)
