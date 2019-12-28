@@ -103,7 +103,7 @@ saveRDS(pop_wiki, "DATA/pop_wiki.Rds")
 page_url <- "List_of_countries_and_dependencies_by_area"
 url <- paste0(wiki_url, page_url)
 surf_wiki <- htmltab(url,
-                     which = 2,
+                     which = 1,
                      rm_nodata_cols = FALSE,
                      stringsAsFactors = FALSE)
 saveRDS(surf_wiki, "DATA/surf_wiki.Rds")

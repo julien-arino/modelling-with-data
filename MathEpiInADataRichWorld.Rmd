@@ -11,6 +11,7 @@ documentclass: article
 fontsize: 12pt
 bibliography: bibliography.bibtex
 biblio-style: plain
+author: "Julien Arino"
 title: "Mathematical epidemiology in a data-rich world"
 abstract: "I discuss the acquisition and use of ``background'' data in mathematical epidemiology models, advocating a pro-active approach to the incorporation of said data. I illustrate various mechanisms for acquiring data, mainly from open data sources. I also discuss incorporating this data into models."
 ---
@@ -364,7 +365,7 @@ if (DOWNLOAD) {
   page_url <- "List_of_countries_and_dependencies_by_area"
   url <- paste0(wiki_url, page_url)
   surf_wiki <- htmltab(url,
-                       which = 2,
+                       which = 1,
                        rm_nodata_cols = FALSE,
                        stringsAsFactors = FALSE)
 }
