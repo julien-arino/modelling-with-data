@@ -2,8 +2,7 @@
 output:
   pdf_document:
     includes:
-      in_header: latexHeaderElsart.tex
-      before_body: latexBeforeBody.tex
+      in_header: latexHeader.tex
     fig_caption: true
     number_sections: yes
     keep_tex: yes
