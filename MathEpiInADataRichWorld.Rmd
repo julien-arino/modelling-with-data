@@ -13,6 +13,8 @@ biblio-style: plain
 author: "Julien Arino"
 title: "Mathematical epidemiology in a data-rich world"
 abstract: "I discuss the acquisition and use of ``background'' data in mathematical epidemiology models, advocating a pro-active approach to the incorporation of said data. I illustrate various mechanisms for acquiring data, mainly from open data sources. I also discuss incorporating this data into models."
+address: "Department of Mathematics & Data Science NEXUS, University of Manitoba, Winnipeg, Manitoba, Canada"
+email: "Julien.Arino@umanitoba.ca"
 ---
 
 ```{r setup, include=FALSE, warning=FALSE}

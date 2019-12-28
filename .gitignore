@@ -1,2 +1,5 @@
 MathEpiInADataRichWorld_cache/
 MathEpiInADataRichWorld_files/
+.gitignore
+MathEpiInADataRichWorld.log
+MathEpiInADataRichWorld.tex
