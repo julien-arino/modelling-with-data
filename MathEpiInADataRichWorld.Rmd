@@ -1641,4 +1641,15 @@ Ideally, mathematical epidemiologists should also familiarise themselves with th
 My work is partially funded by NSERC.
 Various funders supported the Bio.Diaspora Project, but the most important support for ideas presented here was a 2013-2015 CIHR/NSERC Collaborative Health Research Projects grant, *Protecting Canadian Health, Security, and Prosperity through the Novel Integration of Global Epidemic Surveillance and Risk Modelling Technologies*, that I held jointly with K. Khan (St Michael's Hospital \& Bluedot, Toronto).
 
+```{r crop_figures, echo=FALSE}
+path_figs = "MathEpiInADataRichWorld_files/figure-latex/"
+files = list.files(path = path_figs,
+                   pattern = "pdf")
+for (f in files) {
+  # Strip .pdf
+  f <- substr(f,1,(nchar(f)-4))
+  crop_figure(sprintf("%s%s",path_figs,f))
+}
+```
+
 # References
