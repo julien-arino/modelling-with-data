@@ -1,5 +1,5 @@
 # Mathematical epidemiology in a data-rich world
-This repository contains the data and sources for the paper *Mathematical epidemiology in a data-rich world*, by myself (J. Arino). This paper was published in Infectious Disease Modelling in 20xx.
+This repository contains the data and sources for my paper *Mathematical epidemiology in a data-rich world*, published in Infectious Disease Modelling in 2020 ([link](https://doi.org/10.1016/j.idm.2019.12.008)).
 
 ### To generate the pdf file
 Here are a few remarks concerning the production of the PDF from the RMD file.
