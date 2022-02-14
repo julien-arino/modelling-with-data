@@ -24,6 +24,7 @@ required_liraries = c(
   "mapdata",
   "measurements",
   "methods",
+  "readxl",
   "sqldf",
   "wbstats",
   "XML"

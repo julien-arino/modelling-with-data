@@ -14,6 +14,8 @@ library(countrycode)
 # 2022: Added lubridate to easily get current year
 library(lubridate)
 curr_year = year(Sys.Date())
+# 2022: Added readxl because of change of format of the INVS data
+library(readxl)
 # Load additional functions not included in this file
 source("useful_functions.R")
 
@@ -139,7 +141,21 @@ saveRDS(SNCF_time, "DATA/SNCF_time.Rds")
 
 # Data from France INVS
 writeLines("Downloading data from INVS (France)")
-coverage_influenza_FR <- htmltab(SPF_url, which = 1)
+# We first need to download the file and save it locally. (Other packages allow direct reading, not this one
+# without using other methods to specify address to look for, so we just save locally first.)
+download.file(url = SPF_url, 
+              destfile = "DATA/coverage_influenza_FR.xlsx")
+coverage_influenza_FR <- readxl::read_excel("DATA/coverage_influenza_FR.xlsx",
+                                            skip = 5)
+# Set column names because they span two rows
+col_names = c("region",
+              "2016_2017_le65_at_risk", "2016_2017_geq65", "2016_2017_total",
+              "2017_2018_le65_at_risk", "2017_2018_geq65", "2017_2018_total",
+              "2018_2019_le65_at_risk", "2018_2019_geq65", "2018_2019_total",
+              "2019_2020_le65_at_risk", "2019_2020_geq65", "2019_2020_total",
+              "2020_2021_le65_at_risk", "2020_2021_geq65", "2020_2021_total")
+colnames(coverage_influenza_FR) <- col_names
+coverage_influenza_FR <- coverage_influenza_FR[1:(nrow(coverage_influenza_FR)-3),]
 saveRDS(coverage_influenza_FR, "DATA/coverage_influenza_FR.Rds")
 
 # Data from Reseau Sentinelles
