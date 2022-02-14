@@ -13,3 +13,11 @@ install_github("pablo14/formatR")
 3. The last chunk in the RMD file crops the figures before compilation. You might not need it. If you do need it and are using Windows, you will need to figure out how to install pdfcrop. (Hint: you will also have to install Perl.)
 4. The file `download_and_save_variables.R` is an `R` script that .. downloads and saves variables. It puts in one single place all the downloads that are carried out in the paper and saves the result where the main RMD file gets them.
 5. Beware of Wikipedia. If you run into issues when compiling the RMD file, that is most likely where your problem lies. As indicated in the text, Wikipedia editors tend to use tables for a bit everything on a page, which leads to frequent changes in the order in which tables appear in a page. If things break down because, for instance, the renaming of columns complains that the table has fewer columns than the names you are trying to assign, you might have to change the `which =` command to another value.
+
+### Some recent updates (February 2022)
+A few things have changed since the paper was originally published.
+
+1. The package `wb` has evolved and most of the functions I was using became depreciated. Also, some of the arguments changed. For instance, `startdate` now needs to be typeset as `start_date`. The code in the `Rmd` file and the file `download_and_save_variables.R` was adapted to this change. 
+2. Final years were also adapted to run to 2022.
+3. There was a change in the way the WHO `xml` is formatted. The measles data query still works as before, since it grabs the `csv` directly. The code to parse the `xml` is currently broken.
+4. The INVS data has changed from `csv` to `xlsx` (Excel) format, requiring to use another package.
