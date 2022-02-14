@@ -11,9 +11,9 @@ library(XML)
 library(htmltab)
 library(wbstats)
 library(countrycode)
-# Added lubridate to easily get current year
-curr_year = year(Sys.Date())
+# 2022: Added lubridate to easily get current year
 library(lubridate)
+curr_year = year(Sys.Date())
 # Load additional functions not included in this file
 source("useful_functions.R")
 
@@ -57,6 +57,7 @@ saveRDS(GHO_indices, "DATA/GHO_indices.Rds")
 # World Bank data
 writeLines("Downloading data from World Bank")
 new_cache_wb <- wb_cache()
+saveRDS(new_cache_wb, "DATA/new_cache_wb.Rds")
 lifeExpectancy_vars_wb <- wb_search(pattern = "expectancy", cache = new_cache_wb)
 saveRDS(lifeExpectancy_vars_wb, "DATA/lifeExpectancy_vars_wb.Rds")
 pop_vars1_wb <- wb_search(pattern = "population", cache = new_cache_wb)
@@ -65,11 +66,11 @@ pop_vars2_wb <- wb_search(pattern = "total population", cache = new_cache_wb)
 saveRDS(pop_vars2_wb, "DATA/pop_vars2_wb.Rds")
 lifeExpectancy_data_wb = wb_data(indicator = "SP.DYN.LE00.IN",
                                  start_date = 2000,
-                                 end_date = 2019)
+                                 end_date = curr_year)
 saveRDS(lifeExpectancy_data_wb, "DATA/lifeExpectancy_data_wb.Rds")
 pop_data_wb <- wb_data(indicator = "SP.POP.TOTL",
                        start_date = 2000,
-                       end_date = 2019)
+                       end_date = curr_year)
 saveRDS(pop_data_wb, "DATA/pop_data_wb.Rds")
 pop_data_CHN_wb <- wb_data(country = c("CHN"),
                       indicator = "SP.POP.TOTL",
@@ -81,15 +82,15 @@ prop_over65_CHN_wb <- wb_data(country = c("CHN"),
 saveRDS(prop_over65_CHN_wb, "DATA/prop_over65_CHN_wb.Rds")
 tourism_data_arrivals_wb = wb_data(indicator = "ST.INT.ARVL",
                               start_date = 2000,
-                              end_date = 2018)
+                              end_date = curr_year)
 saveRDS(tourism_data_arrivals_wb, "DATA/tourism_data_arrivals_wb.Rds")
 PAX_transported_wb = wb_data(indicator = "IS.AIR.PSGR",
                         start_date = 2000,
-                        end_date = 2018)
+                        end_date = curr_year)
 saveRDS(PAX_transported_wb, "DATA/PAX_transported_wb.Rds")
 aircraft_departures_wb = wb_data(indicator = "IS.AIR.DPRT",
                             start_date = 2000,
-                            end_date = 2018)
+                            end_date = curr_year)
 saveRDS(aircraft_departures_wb, "DATA/aircraft_departures_wb.Rds")
 countries <- c("Canada","China","India","Pakistan","Philippines")
 countries_iso3c <- countrycode(countries,
