@@ -11,6 +11,9 @@ library(XML)
 library(htmltab)
 library(wbstats)
 library(countrycode)
+# Added lubridate to easily get current year
+curr_year = year(Sys.Date())
+library(lubridate)
 # Load additional functions not included in this file
 source("useful_functions.R")
 
