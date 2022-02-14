@@ -62,7 +62,7 @@ knitr::knit_hooks$set(chunk = function(x, options) {
 # The base URL for wikipedia pages
 wiki_url <- "https://en.wikipedia.org/wiki/"
 # URL for Sante Publique France document
-SPF_url <- "https://www.santepubliquefrance.fr/determinants-de-sante/vaccination/articles/donnees-regionales-de-couverture-vaccinale-grippe-par-saison-et-dans-chaque-groupe-d-age"
+SPF_url <- "https://www.santepubliquefrance.fr/media/files/02-determinants-de-sante/vaccination/sev-2021_tableau-21_cv_grippe_reg_saison_groupe-d-age"
 # A copy of the variables as they were on the date of submitting
 # this paper is also provided for convenience.
 # The following variable indicates whether content should be
@@ -94,6 +94,9 @@ if (!DOWNLOAD) {
   influenza_FR <- readRDS("DATA/influenza_FR.Rds")
 }
 ```
+
+\section*{Foreword}\label{sec:foreword}
+This is a low level formatting of the paper "Mathematical epidemiology in a data-rich world", that was published in early 2020. There were some issues with formatting, Elsevier generated image files where there should have been code blocks. Also, some of the code I used at the time is no longer running: until all web available data gets persistent identifiers (such as doi for papers), this type of paper is doomed to run into issues. In the present version, I have updated the code so that it still runs. The content of the paper is still exactly the same as the published version, though.
 
 \section*{Introduction}\label{sec:introduction}
 Data is now the world's most valuable resource. In 2018, the five most valuable companies in the world were, in decreasing order of valuation, Apple, Alphabet, Microsoft, Amazon and Facebook.
@@ -334,6 +337,9 @@ if (DOWNLOAD) {
   pop_data_CHN_wb <- wb(country = c("CHN"),
                         indicator = "SP.POP.TOTL",
                         mrv = 100)
+} else {
+  pop_data_CHN_wb <- readRDS("DATA/pop_data_CHN_wb.Rds")
+  colnames(pop_data_CHN_wb)[5] <- "value"
 }
 plot_hr_yaxis(pop_data_CHN_wb$date,pop_data_CHN_wb$value,
               xlab = "Year", ylab = "Population",
