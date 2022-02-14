@@ -139,20 +139,19 @@ crop_figure = function(file) {
 #
 # Implement a simple caching mechanism for csv data sets from the web.
 # If you need to use other parameters in read.csv or write.csv, add them to
-# the list of arguments of the function. (See for example skip and stringsAsFactors
-# here.)
+# the list of arguments of the function. (See for example skip here.)
 # Here, only a weekly modification date is implemented; changing to days should be obvious.
-nice_load = function(file,
-                     web,
-                     update_days = 7, # default update every 7 days 
-                     skip = 0, # default in read.csv
-                     stringsAsFactors = TRUE) 
+nice_load = function(
+  file,
+  web,
+  update_days = 7, # default update every 7 days 
+  skip = 0 # default in read.csv
+) 
 {
   # If the file is absent, it needs to be loaded
   if (!file.exists(file)) {
     out = read.csv(file = web, 
-                   skip = skip, 
-                   stringsAsFactors = stringsAsFactors)
+                   skip = skip)
     write.csv(out, file = file)
   } else {
     # The file exists. We check how long ago it was modified
@@ -160,14 +159,12 @@ nice_load = function(file,
     if (load_time > update_days) {
       # The file is older than the required refresh interval, load it
       out = read.csv(file = web, 
-                     skip = skip, 
-                     stringsAsFactors = stringsAsFactors)
+                     skip = skip)
       write.csv(out, file = file)
     } else {
       # The file does not need refreshing
       out = read.csv(file = file, 
-                     skip = skip, 
-                     stringsAsFactors = stringsAsFactors)
+                     skip = skip)
     }
   }
   return(out)

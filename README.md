@@ -21,3 +21,4 @@ A few things have changed since the paper was originally published.
 2. Final years were also adapted to run to 2022.
 3. There was a change in the way the WHO `xml` is formatted. The measles data query still works as before, since it grabs the `csv` directly. The code to parse the `xml` is currently broken.
 4. The INVS data has changed from `csv` to `xlsx` (Excel) format, requiring to use another package.
+5. Loading a data frame does not require `stringsAsFactor` anymore since `R` version 4.0, as it is automatic.

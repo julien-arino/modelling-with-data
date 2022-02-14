@@ -17,7 +17,7 @@ source("useful_functions.R")
 # The base URL for wikipedia pages
 wiki_url <- "https://en.wikipedia.org/wiki/"
 # URL for Sante Publique France document
-SPF_url <- "https://www.santepubliquefrance.fr/determinants-de-sante/vaccination/articles/donnees-regionales-de-couverture-vaccinale-grippe-par-saison-et-dans-chaque-groupe-d-age"
+SPF_url <- "https://www.santepubliquefrance.fr/media/files/02-determinants-de-sante/vaccination/sev-2021_tableau-21_cv_grippe_reg_saison_groupe-d-age"  # Changed since the paper was published
 
 # Measles
 writeLines("Downloading measles data from WHO")
@@ -143,6 +143,5 @@ writeLines("Downloading data from Reseau Sentinelles (France)")
 influenza_FR = nice_load(file = "DATA/incidence-RDD-3.csv",
                          web = "https://www.sentiweb.fr/datasets/incidence-RDD-3.csv",
                          update_days = 30,
-                         skip = 1,
-                         stringsAsFactors = FALSE)
+                         )
 saveRDS(influenza_FR, "DATA/influenza_FR.Rds")
