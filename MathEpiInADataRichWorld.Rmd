@@ -99,13 +99,13 @@ if (!DOWNLOAD) {
 }
 ```
 
-\section*{Foreword}\label{sec:foreword}
-This is a basic formatting of the paper "Mathematical epidemiology in a data-rich world", that was published in early 2020 and is accessible [here](https://doi.org/10.1016/j.idm.2019.12.008). 
-There were some issues with formatting in the published version. In particular, image files were generated that should have been code blocks. Also, some of the code I used at the time is no longer running: until all web available data gets persistent identifiers (such as doi for papers), this type of paper is doomed to run into issues, with data being moved or formats being changed. 
+\section*{Foreword to this version of the article}\label{sec:foreword}
+This is a version of the paper "Mathematical epidemiology in a data-rich world", which was published in *Infections Disease Modelling* in early 2020 and is accessible [using this link](https://doi.org/10.1016/j.idm.2019.12.008).
+There were some issues with formatting in the published article. In particular, instead of code blocks, image files were generated. Also, some of the code I used at the time no longer ran: until all web available data gets persistent identifiers (such as doi for papers), this type of paper is doomed to run into issues, with data being moved or formats being changed. 
 
-In the present version, I have updated the code so that it runs. 
-I have also slightly adapted the code: since version 4.0 of `R`, data frames automatically are created with `stringsAsFactors = FALSE`, so this command is not required anymore.
-Besides these changes, the content of the paper is still exactly the same as the published version.
+In the present version, I have updated the code so that it runs again. 
+I have also made small adaptations to the code: since version 4.0 of `R`, data frames automatically are created with `stringsAsFactors = FALSE`, so this command is not required anymore. The library `wp`, which is used in several places, has been completely revamped and the functions I was using were obsoleted.
+Besides these changes, the content of the paper is still exactly the same as the published version, save for the fact that some of data has more recent versions and since the code picks up the most up to date version, some figures are a bit more recent (this version was generated on `r lubridate::wday(lubridate::today(), abbr = FALSE, label = TRUE)` `r lubridate::day(lubridate::today())` `r lubridate::month(lubridate::today(), abbr = FALSE, label = TRUE)` `r lubridate::year(lubridate::today())`).
 
 \section*{Introduction}\label{sec:introduction}
 Data is now the world's most valuable resource. In 2018, the five most valuable companies in the world were, in decreasing order of valuation, Apple, Alphabet, Microsoft, Amazon and Facebook.
