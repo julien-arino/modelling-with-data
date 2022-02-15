@@ -49,6 +49,7 @@ library(sqldf)
 library(ISOweek)
 library(GA)
 library(magrittr)
+library(dplyr)
 library(kableExtra)
 # Load additional functions not included in this file
 source("useful_functions.R")
@@ -59,6 +60,8 @@ knitr::knit_hooks$set(chunk = function(x, options) {
   ifelse(options$size != "normalsize",
          paste0("\\", options$size,"\n\n", x, "\n\n \\normalsize"), x)
 })
+# The current year (used to set latest value to get from World Bank data)
+curr_year = lubridate::year(Sys.Date())
 # The base URL for wikipedia pages
 wiki_url <- "https://en.wikipedia.org/wiki/"
 # URL for Sante Publique France document
@@ -77,6 +80,7 @@ if (!DOWNLOAD) {
   pop_vars2_wb <- readRDS("DATA/pop_vars2_wb.Rds")
   lifeExpectancy_vars_wb <- readRDS("DATA/lifeExpectancy_vars_wb.Rds")
   lifeExpectancy_data_wb <- readRDS("DATA/lifeExpectancy_data_wb.Rds")
+  lifeExpectancy_data_wb_CHN <- readRDS("DATA/lifeExpectancy_data_wb_CHN.Rds")
   pop_data_wb <- readRDS("DATA/pop_data_wb.Rds")
   pop_data_CHN_wb <- readRDS("DATA/pop_data_CHN_wb.Rds")
   pop_wiki <- readRDS("DATA/pop_wiki.Rds")
@@ -96,7 +100,12 @@ if (!DOWNLOAD) {
 ```
 
 \section*{Foreword}\label{sec:foreword}
-This is a low level formatting of the paper "Mathematical epidemiology in a data-rich world", that was published in early 2020. There were some issues with formatting, Elsevier generated image files where there should have been code blocks. Also, some of the code I used at the time is no longer running: until all web available data gets persistent identifiers (such as doi for papers), this type of paper is doomed to run into issues. In the present version, I have updated the code so that it still runs. The content of the paper is still exactly the same as the published version, though.
+This is a basic formatting of the paper "Mathematical epidemiology in a data-rich world", that was published in early 2020 and is accessible [here](https://doi.org/10.1016/j.idm.2019.12.008). 
+There were some issues with formatting in the published version. In particular, image files were generated that should have been code blocks. Also, some of the code I used at the time is no longer running: until all web available data gets persistent identifiers (such as doi for papers), this type of paper is doomed to run into issues, with data being moved or formats being changed. 
+
+In the present version, I have updated the code so that it runs. 
+I have also slightly adapted the code: since version 4.0 of `R`, data frames automatically are created with `stringsAsFactors = FALSE`, so this command is not required anymore.
+Besides these changes, the content of the paper is still exactly the same as the published version.
 
 \section*{Introduction}\label{sec:introduction}
 Data is now the world's most valuable resource. In 2018, the five most valuable companies in the world were, in decreasing order of valuation, Apple, Alphabet, Microsoft, Amazon and Facebook.
@@ -292,9 +301,9 @@ Let me illustrate such libraries by using `wbstats` to find country life expecta
 
 ```{r get_WB_indicators, cache=TRUE}
 if (DOWNLOAD) {
-  new_cache_wb <- wbcache()
-  lifeExpectancy_vars_wb <- wbsearch(pattern = "expectancy", cache = new_cache_wb)
-  pop_vars1_wb <- wbsearch(pattern = "population", cache = new_cache_wb)
+  new_cache_wb <- wb_cache()
+  lifeExpectancy_vars_wb <- wb_search(pattern = "expectancy", cache = new_cache_wb)
+  pop_vars1_wb <- wb_search(pattern = "population", cache = new_cache_wb)
 }
 ```
 
@@ -303,7 +312,8 @@ On the other hand, my search for `population' returns `r dim(pop_vars1_wb)[1]` r
 
 ```{r get_WB_totalPop_indicators}
 if (DOWNLOAD) {
-  pop_vars2_wb <- wbsearch(pattern = "total population", cache = new_cache_wb)
+  pop_vars2_wb <- wb_search(pattern = "total population", 
+                            cache = new_cache_wb)
 }
 ```
 
@@ -312,12 +322,14 @@ With this more refined query, I find a suitable candidate, `SP.POP.TOTL`, which 
 
 ```{r get_WB_lifeExpectancy, cache=TRUE}
 if (DOWNLOAD) {
-  lifeExpectancy_data_wb = wb(indicator = "SP.DYN.LE00.IN",
-                              startdate = 2000,
-                              enddate = 2019)
-  pop_data_wb <- wb(indicator = "SP.POP.TOTL",
-                    startdate = 2000,
-                    enddate = 2019)
+  lifeExpectancy_data_wb = wb_data(indicator = "SP.DYN.LE00.IN",
+                                   start_date = 2000,
+                                   end_date = curr_year,
+                                   return_wide = FALSE)
+  pop_data_wb <- wb_data(indicator = "SP.POP.TOTL",
+                         start_date = 2000,
+                         end_date = curr_year,
+                         return_wide = FALSE)
 }
 ```
 
@@ -334,14 +346,11 @@ Let me illustrate the use of `mrv` by plotting the population of China. Remark t
 
 ```{r getAndPlot_CHN_from_WB,fig.cap="Evolution of the population of China as given by World Bank data.",out.width='0.45\\linewidth'}
 if (DOWNLOAD) {
-  pop_data_CHN_wb <- wb(country = c("CHN"),
-                        indicator = "SP.POP.TOTL",
-                        mrv = 100)
-} else {
-  pop_data_CHN_wb <- readRDS("DATA/pop_data_CHN_wb.Rds")
-  colnames(pop_data_CHN_wb)[5] <- "value"
+  pop_data_CHN_wb <- wb_data(country = c("CHN"),
+                             indicator = "SP.POP.TOTL",
+                             mrv = 100)
 }
-plot_hr_yaxis(pop_data_CHN_wb$date,pop_data_CHN_wb$value,
+plot_hr_yaxis(pop_data_CHN_wb$date, pop_data_CHN_wb$value,
               xlab = "Year", ylab = "Population",
               type = "l")
 ```
@@ -366,8 +375,7 @@ if (DOWNLOAD) {
   page_url <- "List_of_countries_and_dependencies_by_population"
   url <- paste0(wiki_url, page_url)
   pop_wiki <- htmltab(url,
-                      which = 1,
-                      stringsAsFactors = FALSE)
+                      which = 1)
   page_url <- "List_of_countries_and_dependencies_by_area"
   url <- paste0(wiki_url, page_url)
   surf_wiki <- htmltab(url,
@@ -380,7 +388,7 @@ if (DOWNLOAD) {
 Now that the data has been acquired, some processing is needed. Tables in Wikipedia show numbers with comma separating groups of three digits; these commas need to be removed. Surface areas are also provided in both kilometres and miles; I remove the latter. Finally, I rename some columns for convenience.
 
 ```{r prep_wiki_tables}
-colnames(pop_wiki)[2:3] = c("state","population")
+colnames(pop_wiki)[c(2,4)] = c("state","population")
 colnames(surf_wiki)[2:5] = c("state","total","land","water")
 pop_wiki$population = as.numeric(gsub(",","",pop_wiki$population))
 for (i in 3:5) {
@@ -397,7 +405,7 @@ Note that `htmltab` allows to apply a function to each column in the table, so s
 pop_surf_wiki = merge(x = pop_wiki, y = surf_wiki,
                       by.x = "state",
                       by.y = "state")
-pop_surf_wiki = pop_surf_wiki[,c(1,3,8)]
+pop_surf_wiki = pop_surf_wiki[,c(1,4,9)]
 colnames(pop_surf_wiki) = c("name","pop","surf")
 pop_surf_wiki$dens = pop_surf_wiki$pop/pop_surf_wiki$surf
 ```
@@ -508,19 +516,25 @@ The appropriateness of this hypothesis depends on the aim of the model.
 - If one uses the model for long term predictions, then the hypothesis is valid, since over several generations, the important characteristic can be safely assumed to be the mean duration of life. In this case, we can just set $1/d$ to be the life expectancy data grabbed earlier.
 - Now suppose that the model is to be used for short term predictions. In this case, the hypothesis of exponential distribution of life durations becomes a problem, as I illustrate in the following example.
 
-```{r plot_life_expectancy_CHN, echo=FALSE, fig.cap="\\label{fig:lifeExpectancy_CHN} Proportion of a cohort surviving when the mean of the exponential distribution equals the life expectancy at birth in China in 2017."}
+```{r plot_life_expectancy_CHN, echo=FALSE, fig.cap="\\label{fig:lifeExpectancy_CHN} Proportion of a cohort surviving when the mean of the exponential distribution equals the life expectancy at birth in China in the latest available value."}
+if (DOWNLOAD) {
+  lifeExpectancy_data_wb_CHN <- wb_data(country = c("CHN"),
+                                        indicator = "SP.DYN.LE00.IN",
+                                        mrv = 1,
+                                        return_wide = FALSE)
+}
 t = 0:150
-plot(t,exp(-(1/lifeExpectancy_data_wb[which(lifeExpectancy_data_wb$iso3c=="CHN"),][1,"value"])*t),
+plot(t,exp(-1/as.numeric(lifeExpectancy_data_wb_CHN$value)*t),
      ylim = c(0,1), xlab = "Age (years)", ylab = "Proportion of cohort surviving",
      type = "l", lwd = 2)
-abline(v=lifeExpectancy_data_wb[which(lifeExpectancy_data_wb$iso3c=="CHN"),][1,"value"],
+abline(v=as.numeric(lifeExpectancy_data_wb_CHN$value),
        col = "red", lwd = 2)
 grid(lwd=2)
 ```
 
-Let me consider the population of China. Querying the World Bank data, life expectancy at birth in China in `r lifeExpectancy_data_wb[which(lifeExpectancy_data_wb$iso3c=="CHN"),][1,"date"]` was `r lifeExpectancy_data_wb[which(lifeExpectancy_data_wb$iso3c=="CHN"),][1,"value"]` years.
+Let me consider the population of China. Querying the World Bank data, life expectancy at birth in China in `r lifeExpectancy_data_wb_CHN$date` was `r lifeExpectancy_data_wb_CHN$value` years.
 Now recall that for a random variable with exponential distribution with parameter $d$ (or mean $1/d$), the survival probability is given by $\mathcal{S}(s)=\mathbb{P}(t>s) = 1-\mathbb{P}(t\leq s)=e^{-ds}$.
-Using the value `r lifeExpectancy_data_wb[which(lifeExpectancy_data_wb$iso3c=="CHN"),][1,"value"]` years for the inverse of the death rate, it follows that the proportion of individuals in a cohort born at time $t_0=0$ who survive to age $t=s$ is as shown in Figure \ref{fig:lifeExpectancy_CHN}.
+Using the value `r lifeExpectancy_data_wb_CHN$value` years for the inverse of the death rate, it follows that the proportion of individuals in a cohort born at time $t_0=0$ who survive to age $t=s$ is as shown in Figure \ref{fig:lifeExpectancy_CHN}.
 
 If considering a model for the long term behaviour of the population, the important characteristic is the red vertical line, i.e., the mean. However, if one is interested in the short term dynamics, then there are two issues:
 
@@ -541,19 +555,19 @@ Looking through World Bank indicators as in Section \ref{sec:R_API_libs}, I find
 
 ```{r download_CHN_over65, echo=FALSE}
 if (DOWNLOAD) {
-  prop_over65_CHN_wb <- wb(country = c("CHN"),
-                           indicator = "SP.POP.65UP.TO.ZS",
-                           mrv = 1)
+  prop_over65_CHN_wb <- wb_data(country = c("CHN"),
+                                indicator = "SP.POP.65UP.TO.ZS",
+                                mrv = 1, return_wide = FALSE)
 }
 ```
 
-Grabbing the data from the World Bank, `r round(prop_over65_CHN_wb$value,2)`% of the population of China was over 65 in `r prop_over65_CHN_wb$date`. From the formula above, in order to have the (exponentially distributed) lifetime such that $\mathcal{S}(65)=p_{65}$, the mean lifetime should be `r round(-65/log(prop_over65_CHN_wb$value/100),2)` years.
+  Grabbing the data from the World Bank, `r round(as.numeric(prop_over65_CHN_wb$value),2)`% of the population of China was over 65 in `r prop_over65_CHN_wb$date`. From the formula above, in order to have the (exponentially distributed) lifetime such that $\mathcal{S}(65)=p_{65}$, the mean lifetime should be `r round(-65/log(as.numeric(prop_over65_CHN_wb$value)/100),2)` years.
 
 ```{r plot_adjusted_CHN_lifetime, echo=FALSE, fig.cap="\\label{fig:adjusted_lifeExpectancy_CHN} Adjusted (exponential) life expectancy distribution for CHN, taking into account the desired area under curve for survival of 65 years and older."}
-p_65 = -log(prop_over65_CHN_wb$value/100)/65
+p_65 = -log(as.numeric(prop_over65_CHN_wb$value)/100)/65
 t = 0:150
 t_65 = 65:150
-plot(t,exp(-(1/lifeExpectancy_data_wb[which(lifeExpectancy_data_wb$iso3c=="CHN"),][1,"value"])*t),
+plot(t,exp(-(1/as.numeric(lifeExpectancy_data_wb[which(lifeExpectancy_data_wb$iso3c=="CHN"),][1,"value"]))*t),
      ylim = c(0,1), xlab = "Age (years)", ylab = "Proportion of cohort surviving",
      type = "l", lwd = 2)
 lines(t,exp(-p_65*t),
@@ -561,7 +575,7 @@ lines(t,exp(-p_65*t),
 polygon(x = c(t_65,rev(t_65)),
         y = c(exp(-p_65*t_65),rep(0,length(t_65))),
         col = "green")
-abline(v=lifeExpectancy_data_wb[which(lifeExpectancy_data_wb$iso3c=="CHN"),][1,"value"],
+abline(v=as.numeric(lifeExpectancy_data_wb[which(lifeExpectancy_data_wb$iso3c=="CHN"),][1,"value"]),
        col = "red", lwd = 2)
 abline(v=1/p_65, col = "green", lwd = 2)
 grid()
@@ -780,12 +794,12 @@ if (DOWNLOAD) {
                                 startdate = 2000,
                                 enddate = 2018)
 }
-query = "SELECT date,value
+query = "SELECT date, value
 FROM tourism_data_arrivals_wb
-WHERE `iso3c`='WLD'
+WHERE iso3c='WLD'
 ORDER BY date"
 tourism_world = sqldf(query)
-plot_hr_yaxis(tourism_world$date,tourism_world$value,
+plot_hr_yaxis(tourism_world$date, tourism_world$value,
      xlab = "Year", ylab = "Incoming tourists",
      type = "b", lwd = 2)
 ```
@@ -804,13 +818,15 @@ if (DOWNLOAD) {
                               startdate = 2000,
                               enddate = 2018)
 }
-PAX_world = sqldf("SELECT date,value FROM PAX_transported_wb
-                  WHERE `iso3c`='WLD' ORDER BY date")
+PAX_world = sqldf("SELECT date,value 
+                   FROM PAX_transported_wb
+                   WHERE `iso3c`='WLD' ORDER BY date")
 plot_hr_yaxis(PAX_world$date,PAX_world$value,
      xlab = "Year", ylab = "Total PAX",
      type = "b", lwd = 2)
-aircraft_world = sqldf("SELECT date,value FROM aircraft_departures_wb
-                       WHERE `iso3c`='WLD' ORDER BY date")
+aircraft_world = sqldf("SELECT date,value 
+                        FROM aircraft_departures_wb
+                        WHERE `iso3c`='WLD' ORDER BY date")
 plot_hr_yaxis(aircraft_world$date,aircraft_world$value,
      xlab = "Year", ylab = "Aircraft departures",
      type = "b", lwd = 2)
@@ -1225,6 +1241,7 @@ tmp <- conv_unit(centroids_regions_FR$cent_lat,
 centroids_regions_FR$cent_lat = as.numeric(tmp)
 colnames(pop_regions_FR)[3] = "pop"
 pop_regions_FR$pop = as.numeric(gsub(",","",pop_regions_FR$pop))
+pop_regions_FR$Region = stringr::str_trim(pop_regions_FR$Region)
 regions_FR = merge(x = pop_regions_FR,
                        y = centroids_regions_FR,
                        by.x = "Region", by.y = "region")
@@ -1565,6 +1582,8 @@ error_simulation = function(v,data.df,param,IC,startDate,endDate){
 Now that this function is ready, I can use a genetic algorithm to minimise the error. Genetic algorithms work by maximising the so-called fitness function, hence I give as argument the negative of the function I just defined. Note that since the data is incidence data, I need comparable model output. Because I assume that neither latently infected nor asymptomatic cases are detected, it follows that comparison is to the rate of apparition of new symptomatically infectious cases, $(1-\pi)\varepsilon L$.
 
 ```{r run_GA, cache=TRUE}
+library(parallel)
+library(doParallel)
 suggestedSol <- c(p$beta,0.005)
 GA <- ga(type = "real-valued",
          fitness =  

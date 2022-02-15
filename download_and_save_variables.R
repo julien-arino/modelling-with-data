@@ -13,7 +13,6 @@ library(wbstats)
 library(countrycode)
 # 2022: Added lubridate to easily get current year
 library(lubridate)
-curr_year = year(Sys.Date())
 # 2022: Added readxl because of change of format of the INVS data
 library(readxl)
 # Load additional functions not included in this file
@@ -56,8 +55,15 @@ colnames(GHO_indices) = c("Description","Name","URL")
 rownames(GHO_indices) = 1:dim(GHO_indices)[1]
 saveRDS(GHO_indices, "DATA/GHO_indices.Rds")
 
-# World Bank data
+##
+## World Bank data
+## 
+# Note that with the newer version of the library used, we could have queried most
+# of the indicators simultaneously. We keep this format for consistency with the previous
+# version. Also, using return_wide=FALSE means that all returns come with the column
+# name `value`, which is useful.
 writeLines("Downloading data from World Bank")
+curr_year = year(Sys.Date())
 new_cache_wb <- wb_cache()
 saveRDS(new_cache_wb, "DATA/new_cache_wb.Rds")
 lifeExpectancy_vars_wb <- wb_search(pattern = "expectancy", cache = new_cache_wb)
@@ -68,38 +74,56 @@ pop_vars2_wb <- wb_search(pattern = "total population", cache = new_cache_wb)
 saveRDS(pop_vars2_wb, "DATA/pop_vars2_wb.Rds")
 lifeExpectancy_data_wb = wb_data(indicator = "SP.DYN.LE00.IN",
                                  start_date = 2000,
-                                 end_date = curr_year)
+                                 end_date = curr_year,
+                                 country = "all",
+                                 return_wide = FALSE)
 saveRDS(lifeExpectancy_data_wb, "DATA/lifeExpectancy_data_wb.Rds")
+lifeExpectancy_data_wb_CHN <- wb_data(country = c("CHN"),
+                                      indicator = "SP.DYN.LE00.IN",
+                                      mrv = 1,
+                                      return_wide = FALSE)
+saveRDS(lifeExpectancy_data_wb_CHN, "DATA/lifeExpectancy_data_wb_CHN.Rds")
 pop_data_wb <- wb_data(indicator = "SP.POP.TOTL",
                        start_date = 2000,
-                       end_date = curr_year)
+                       end_date = curr_year,
+                       country = "all",
+                       return_wide = FALSE)
 saveRDS(pop_data_wb, "DATA/pop_data_wb.Rds")
 pop_data_CHN_wb <- wb_data(country = c("CHN"),
-                      indicator = "SP.POP.TOTL",
-                      mrv = 100)
+                           indicator = "SP.POP.TOTL",
+                           mrv = 100,
+                           return_wide = FALSE)
 saveRDS(pop_data_CHN_wb, "DATA/pop_data_CHN_wb.Rds")
 prop_over65_CHN_wb <- wb_data(country = c("CHN"),
-                         indicator = "SP.POP.65UP.TO.ZS",
-                         mrv = 1)
+                              indicator = "SP.POP.65UP.TO.ZS",
+                              mrv = 1,
+                              return_wide = FALSE)
 saveRDS(prop_over65_CHN_wb, "DATA/prop_over65_CHN_wb.Rds")
 tourism_data_arrivals_wb = wb_data(indicator = "ST.INT.ARVL",
-                              start_date = 2000,
-                              end_date = curr_year)
+                                   start_date = 2000,
+                                   end_date = curr_year,
+                                   country = "all",
+                                   return_wide = FALSE)
 saveRDS(tourism_data_arrivals_wb, "DATA/tourism_data_arrivals_wb.Rds")
 PAX_transported_wb = wb_data(indicator = "IS.AIR.PSGR",
-                        start_date = 2000,
-                        end_date = curr_year)
+                             start_date = 2000,
+                             end_date = curr_year,
+                             country = "all",
+                             return_wide = FALSE)
 saveRDS(PAX_transported_wb, "DATA/PAX_transported_wb.Rds")
 aircraft_departures_wb = wb_data(indicator = "IS.AIR.DPRT",
-                            start_date = 2000,
-                            end_date = curr_year)
+                                 start_date = 2000,
+                                 end_date = curr_year,
+                                 country = "all",
+                                 return_wide = FALSE)
 saveRDS(aircraft_departures_wb, "DATA/aircraft_departures_wb.Rds")
 countries <- c("Canada","China","India","Pakistan","Philippines")
 countries_iso3c <- countrycode(countries,
                                origin = "country.name",
                                destination = "iso3c")
 pop_data_5ctr_wb <- wb_data(country = countries_iso3c,
-                       indicator = "SP.POP.TOTL")
+                            indicator = "SP.POP.TOTL",
+                            return_wide = FALSE)
 saveRDS(pop_data_5ctr_wb, "DATA/pop_data_5ctr_wb.Rds")
 
 # Data from Wikipedia
